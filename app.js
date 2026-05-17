@@ -1,8 +1,9 @@
 /* ═══════════════════════════════════════════════════
-   SHOTS BY SIRI — Application Logic
+   SHOTS BY SIRI — Application Logic v2
+   Cream/Gold PDF + Enhanced Landing Page
    ═══════════════════════════════════════════════════ */
 
-// ——— Configuration & Pricing Data ———
+// ——— Pricing Data ———
 const PRICING = {
     services: {
         'traditional-photo': { name: 'Traditional Photography', icon: '📷', price: 15000, unit: 'per event' },
@@ -34,10 +35,10 @@ const PRICING = {
 const EVENTS = [
     { id: 'engagement', name: 'Engagement', icon: '💍', description: 'Ring ceremony & celebration', services: ['traditional-photo', 'traditional-video', 'candid-photo', 'candid-video', 'drone', 'led-screen'] },
     { id: 'vratham', name: 'Vratham / Seemantham', icon: '🪔', description: 'Pre-wedding rituals', services: ['traditional-photo', 'traditional-video'] },
-    { id: 'pellikoduku', name: 'Pelli Koduku', icon: '🎉', description: 'Groom\'s celebrations', services: ['traditional-photo', 'traditional-video', 'candid-photo', 'candid-video', 'drone', 'led-screen'] },
-    { id: 'pellikuthuru', name: 'Pelli Kuthuru', icon: '🌺', description: 'Bride\'s celebrations', services: ['traditional-photo', 'traditional-video', 'candid-photo', 'candid-video', 'drone', 'led-screen'] },
-    { id: 'groom-haldi', name: 'Groom Haldi / Pasupu', icon: '🟡', description: 'Groom\'s haldi ceremony', services: ['candid-photo', 'candid-video'] },
-    { id: 'bride-haldi', name: 'Bride Haldi / Pasupu', icon: '💛', description: 'Bride\'s haldi ceremony', services: ['candid-photo', 'candid-video'] },
+    { id: 'pellikoduku', name: 'Pelli Koduku', icon: '🎉', description: "Groom's celebrations", services: ['traditional-photo', 'traditional-video', 'candid-photo', 'candid-video', 'drone', 'led-screen'] },
+    { id: 'pellikuthuru', name: 'Pelli Kuthuru', icon: '🌺', description: "Bride's celebrations", services: ['traditional-photo', 'traditional-video', 'candid-photo', 'candid-video', 'drone', 'led-screen'] },
+    { id: 'groom-haldi', name: 'Groom Haldi / Pasupu', icon: '🟡', description: "Groom's haldi ceremony", services: ['candid-photo', 'candid-video'] },
+    { id: 'bride-haldi', name: 'Bride Haldi / Pasupu', icon: '💛', description: "Bride's haldi ceremony", services: ['candid-photo', 'candid-video'] },
     { id: 'sangeeth', name: 'Sangeeth Night', icon: '🎶', description: 'Music & dance celebration', services: ['candid-photo', 'candid-video', 'traditional-video', 'drone', 'led-screen'] },
     { id: 'mehandi', name: 'Mehandi Ceremony', icon: '🤲', description: 'Mehandi application day', services: ['candid-photo', 'traditional-video'] },
     { id: 'cocktail-party', name: 'Cocktail Party', icon: '🍸', description: 'Evening party celebration', services: ['candid-photo', 'candid-video', 'led-screen'] },
@@ -46,685 +47,621 @@ const EVENTS = [
     { id: 'satyanarayana-vratham', name: 'Satyanarayana Vratham', icon: '🙏', description: 'Post-wedding puja', services: ['traditional-photo', 'traditional-video'] },
 ];
 
-// ——— Google Sheets Configuration ———
-// Replace with your actual Google Apps Script Web App URL
 const GOOGLE_SHEETS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
 
 // ——— State ———
 let currentStep = 1;
 const totalSteps = 6;
 let selectedEvents = new Set();
-let eventServices = {}; // { eventId: { serviceId: true/false } }
+let eventServices = {};
 let albumQty = { 'candid-press': 0, 'candid-magnum': 0, 'trad-press': 0, 'trad-magnum': 0 };
+let cachedLogoData = null;
+let cachedAssets = {};
 
-// ——— Initialization ———
+// ——— Init ———
 document.addEventListener('DOMContentLoaded', () => {
     initPetals();
+    initSparkles();
+    initCursorGlow();
     initScrollAnimations();
     initStatCounters();
     initNavScroll();
-    renderEventsGrid();
     initMobileMenu();
+    renderEventsGrid();
+    generateGallery();
+    preloadPDFAssets();
 });
 
 // ——— Floating Petals ———
 function initPetals() {
-    const container = document.getElementById('floating-petals');
-    if (!container) return;
-    for (let i = 0; i < 15; i++) {
-        const petal = document.createElement('div');
-        petal.className = 'petal';
-        petal.style.left = Math.random() * 100 + '%';
-        petal.style.animationDuration = (8 + Math.random() * 12) + 's';
-        petal.style.animationDelay = Math.random() * 10 + 's';
-        petal.style.opacity = 0.2 + Math.random() * 0.3;
-        petal.style.transform = `scale(${0.5 + Math.random() * 1})`;
-        container.appendChild(petal);
+    const c = document.getElementById('floating-petals');
+    if (!c) return;
+    for (let i = 0; i < 12; i++) {
+        const p = document.createElement('div');
+        p.className = 'petal';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (8 + Math.random() * 12) + 's';
+        p.style.animationDelay = Math.random() * 10 + 's';
+        p.style.opacity = 0.15 + Math.random() * 0.25;
+        p.style.transform = `scale(${0.5 + Math.random()})`;
+        c.appendChild(p);
     }
 }
 
-// ——— Scroll-triggered Animations ———
-function initScrollAnimations() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-    document.querySelectorAll('.service-card, .step-card, .testimonial-card, .section-header').forEach(el => {
-        el.classList.add('reveal');
-        observer.observe(el);
-    });
+// ——— Sparkles ———
+function initSparkles() {
+    const c = document.getElementById('sparkle-container');
+    if (!c) return;
+    for (let i = 0; i < 20; i++) {
+        const s = document.createElement('div');
+        s.className = 'sparkle';
+        s.style.left = Math.random() * 100 + '%';
+        s.style.top = Math.random() * 100 + '%';
+        s.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+        s.style.animationDelay = Math.random() * 4 + 's';
+        s.style.width = s.style.height = (2 + Math.random() * 3) + 'px';
+        c.appendChild(s);
+    }
 }
 
-// ——— Stat Counter Animation ———
+// ——— Cursor Glow ———
+function initCursorGlow() {
+    const glow = document.getElementById('cursor-glow');
+    if (!glow) return;
+    let mx = 0, my = 0, gx = 0, gy = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    (function animate() {
+        gx += (mx - gx) * 0.08;
+        gy += (my - gy) * 0.08;
+        glow.style.left = gx + 'px';
+        glow.style.top = gy + 'px';
+        requestAnimationFrame(animate);
+    })();
+}
+
+// ——— Scroll Animations ———
+function initScrollAnimations() {
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.reveal-card, .section-header').forEach(el => obs.observe(el));
+}
+
+// ——— Stat Counters ———
 function initStatCounters() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const el = entry.target;
-                const target = parseInt(el.dataset.count);
-                animateCounter(el, target);
-                observer.unobserve(el);
-            }
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { animateCounter(e.target, parseInt(e.target.dataset.count)); obs.unobserve(e.target); }
         });
     }, { threshold: 0.5 });
-
-    document.querySelectorAll('.stat-number').forEach(el => observer.observe(el));
+    document.querySelectorAll('.stat-number').forEach(el => obs.observe(el));
 }
 
 function animateCounter(el, target) {
-    const duration = 2000;
-    const start = performance.now();
-    function update(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        el.textContent = Math.round(eased * target);
-        if (progress < 1) requestAnimationFrame(update);
-    }
-    requestAnimationFrame(update);
+    const dur = 2000, start = performance.now();
+    (function update(now) {
+        const p = Math.min((now - start) / dur, 1);
+        el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target);
+        if (p < 1) requestAnimationFrame(update);
+    })(start);
 }
 
-// ——— Nav Scroll Effect ———
+// ——— Nav Scroll ———
 function initNavScroll() {
-    const nav = document.querySelector('.hero-nav');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) {
-            nav.classList.add('scrolled');
-        } else {
-            nav.classList.remove('scrolled');
-        }
-    });
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 80));
 }
 
 // ——— Mobile Menu ———
 function initMobileMenu() {
     const btn = document.getElementById('mobile-menu-btn');
-    if (btn) {
-        btn.addEventListener('click', () => {
-            document.getElementById('mobile-menu-overlay').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-    }
+    if (btn) btn.addEventListener('click', () => { document.getElementById('mobile-menu-overlay').classList.add('active'); document.body.style.overflow = 'hidden'; });
+}
+function closeMobileMenu() { document.getElementById('mobile-menu-overlay').classList.remove('active'); document.body.style.overflow = ''; }
+function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
+
+// ——— Gallery Generation ———
+function generateGallery() {
+    const grid = document.getElementById('gallery-grid');
+    if (!grid) return;
+    const scenes = [
+        { prompt: 'South Indian bride in red silk saree with gold jewelry, wedding portrait, cinematic lighting', color: '#2a1810' },
+        { prompt: 'Candid wedding moment couple laughing', color: '#1a1520' },
+        { prompt: 'Drone aerial shot wedding venue decorated', color: '#101520' },
+        { prompt: 'Traditional haldi ceremony golden light', color: '#2a2010' },
+        { prompt: 'Wedding reception LED lights crowd', color: '#151025' },
+        { prompt: 'Bridal mehandi hands detailed close up', color: '#201510' },
+    ];
+    scenes.forEach((s, i) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item reveal-card';
+        item.style.background = `linear-gradient(135deg, ${s.color}, #0a0a0f)`;
+        item.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:0.3">${['📸', '💑', '🚁', '🟡', '🎊', '🤲'][i]}</div>`;
+        grid.appendChild(item);
+    });
 }
 
-function closeMobileMenu() {
-    document.getElementById('mobile-menu-overlay').classList.remove('active');
-    document.body.style.overflow = '';
+// ——— Preload PDF Assets ———
+function preloadPDFAssets() {
+    ['assets/logo.png', 'assets/elephant.png', 'assets/lantern.png', 'assets/floral-corner.png'].forEach(src => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            const c = document.createElement('canvas');
+            c.width = img.naturalWidth; c.height = img.naturalHeight;
+            c.getContext('2d').drawImage(img, 0, 0);
+            cachedAssets[src] = c.toDataURL('image/png');
+        };
+        img.src = src;
+    });
 }
 
-// ——— Smooth scroll ———
-function scrollToSection(id) {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-}
-
-// ═══════════════════════════════════
+// ═══════════════════════════
 // QUOTE BUILDER
-// ═══════════════════════════════════
-
+// ═══════════════════════════
 function startQuoteBuilder() {
-    const qb = document.getElementById('quote-builder');
-    qb.classList.remove('hidden');
+    document.getElementById('quote-builder').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     currentStep = 1;
     updateStep();
 }
-
 function closeQuoteBuilder() {
     document.getElementById('quote-builder').classList.add('hidden');
     document.body.style.overflow = '';
 }
 
 function updateStep() {
-    // Show/hide steps
     document.querySelectorAll('.qb-step').forEach(s => s.classList.remove('active'));
-    const activeStep = document.querySelector(`.qb-step[data-step="${currentStep}"]`);
-    if (activeStep) activeStep.classList.add('active');
+    const active = document.querySelector(`.qb-step[data-step="${currentStep}"]`);
+    if (active) active.classList.add('active');
 
-    // Progress
     const progress = (currentStep / totalSteps) * 100;
     document.getElementById('qb-progress-bar').style.setProperty('--progress', progress + '%');
-    document.getElementById('qb-progress-text').textContent = `Step ${currentStep} of ${totalSteps}`;
+    document.querySelectorAll('.ps').forEach(p => {
+        const s = parseInt(p.dataset.s);
+        p.classList.toggle('active', s === currentStep);
+        p.classList.toggle('done', s < currentStep);
+    });
 
-    // Nav buttons
-    const prevBtn = document.getElementById('qb-prev');
-    const nextBtn = document.getElementById('qb-next');
-    prevBtn.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+    const prev = document.getElementById('qb-prev'), next = document.getElementById('qb-next');
+    prev.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+    if (currentStep === totalSteps) { next.style.display = 'none'; }
+    else if (currentStep === totalSteps - 1) { next.innerHTML = '<span>View Final Quote</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>'; next.style.display = 'inline-flex'; }
+    else { next.innerHTML = '<span>Next Step</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>'; next.style.display = 'inline-flex'; }
 
-    if (currentStep === totalSteps) {
-        nextBtn.style.display = 'none';
-    } else if (currentStep === totalSteps - 1) {
-        nextBtn.innerHTML = '<span>View Final Quote</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
-        nextBtn.style.display = 'inline-flex';
-    } else {
-        nextBtn.innerHTML = '<span>Next Step</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
-        nextBtn.style.display = 'inline-flex';
-    }
-
-    // Recalculate total
     recalculate();
-
-    // Build dynamic content for steps
     if (currentStep === 3) buildEventConfigs();
     if (currentStep === 5) buildSummary();
-    if (currentStep === 6) {
-        document.getElementById('final-amount').textContent = formatCurrency(calculateTotal());
-    }
-
-    // Scroll panel to top
+    if (currentStep === 6) document.getElementById('final-amount').textContent = formatCurrency(calculateTotal());
     document.querySelector('.qb-panel').scrollTop = 0;
 }
 
 function nextStep() {
     if (currentStep === 1 && !validateStep1()) return;
-    if (currentStep === 2 && selectedEvents.size === 0) {
-        showToast('Please select at least one event', 'error');
-        return;
-    }
-    if (currentStep < totalSteps) {
-        currentStep++;
-        updateStep();
-    }
+    if (currentStep === 2 && selectedEvents.size === 0) { showToast('Please select at least one event', 'error'); return; }
+    if (currentStep < totalSteps) { currentStep++; updateStep(); }
 }
+function prevStep() { if (currentStep > 1) { currentStep--; updateStep(); } }
 
-function prevStep() {
-    if (currentStep > 1) {
-        currentStep--;
-        updateStep();
-    }
-}
-
-// ——— Validation ———
 function validateStep1() {
     const name = document.getElementById('customer-name').value.trim();
     const mobile = document.getElementById('customer-mobile').value.trim();
-
     let valid = true;
-
-    if (!name) {
-        showFieldError('customer-name', 'Please enter your name');
-        valid = false;
-    } else {
-        clearFieldError('customer-name');
-    }
-
-    if (!mobile || !/^[0-9]{10}$/.test(mobile)) {
-        showFieldError('customer-mobile', 'Please enter a valid 10-digit mobile number');
-        valid = false;
-    } else {
-        clearFieldError('customer-mobile');
-    }
-
+    if (!name) { showFieldError('customer-name', 'Please enter your name'); valid = false; } else clearFieldError('customer-name');
+    if (!mobile || !/^[0-9]{10}$/.test(mobile)) { showFieldError('customer-mobile', 'Enter a valid 10-digit mobile number'); valid = false; } else clearFieldError('customer-mobile');
     return valid;
 }
 
-function showFieldError(fieldId, message) {
-    const field = document.getElementById(fieldId);
-    field.classList.add('input-error');
-
-    let errEl = field.parentElement.querySelector('.error-message');
-    if (!errEl) {
-        errEl = document.createElement('div');
-        errEl.className = 'error-message';
-        field.parentElement.appendChild(errEl);
-    }
-    errEl.textContent = message;
-    errEl.classList.add('show');
+function showFieldError(id, msg) {
+    const f = document.getElementById(id); f.classList.add('input-error');
+    let e = f.parentElement.querySelector('.error-message');
+    if (!e) { e = document.createElement('div'); e.className = 'error-message'; f.parentElement.appendChild(e); }
+    e.textContent = msg; e.classList.add('show');
+}
+function clearFieldError(id) {
+    const f = document.getElementById(id); f.classList.remove('input-error');
+    const e = f.parentElement.querySelector('.error-message'); if (e) e.classList.remove('show');
 }
 
-function clearFieldError(fieldId) {
-    const field = document.getElementById(fieldId);
-    field.classList.remove('input-error');
-    const errEl = field.parentElement.querySelector('.error-message');
-    if (errEl) errEl.classList.remove('show');
-}
-
-// ——— Render Events Grid (Step 2) ———
+// Events
 function renderEventsGrid() {
-    const grid = document.getElementById('events-grid');
-    grid.innerHTML = EVENTS.map(event => `
-        <label class="event-toggle" id="event-${event.id}">
-            <input type="checkbox" value="${event.id}" onchange="toggleEvent('${event.id}', this.checked)">
-            <div class="event-toggle-card">
-                <span class="event-toggle-icon">${event.icon}</span>
-                <div class="event-toggle-info">
-                    <h4>${event.name}</h4>
-                    <p>${event.description}</p>
-                </div>
-                <div class="event-check"></div>
-            </div>
-        </label>
-    `).join('');
+    document.getElementById('events-grid').innerHTML = EVENTS.map(e => `
+        <label class="event-toggle" id="event-${e.id}">
+            <input type="checkbox" value="${e.id}" onchange="toggleEvent('${e.id}',this.checked)">
+            <div class="event-toggle-card"><span class="event-toggle-icon">${e.icon}</span><div class="event-toggle-info"><h4>${e.name}</h4><p>${e.description}</p></div><div class="event-check"></div></div>
+        </label>`).join('');
 }
 
-function toggleEvent(eventId, checked) {
-    if (checked) {
-        selectedEvents.add(eventId);
-        // Initialize services for this event
-        const event = EVENTS.find(e => e.id === eventId);
-        if (!eventServices[eventId]) {
-            eventServices[eventId] = {};
-            event.services.forEach(s => eventServices[eventId][s] = false);
-        }
-    } else {
-        selectedEvents.delete(eventId);
-        delete eventServices[eventId];
-    }
+function toggleEvent(id, checked) {
+    if (checked) { selectedEvents.add(id); const ev = EVENTS.find(e => e.id === id); if (!eventServices[id]) { eventServices[id] = {}; ev.services.forEach(s => eventServices[id][s] = false); } }
+    else { selectedEvents.delete(id); delete eventServices[id]; }
     recalculate();
 }
 
-// ——— Build Event Configuration (Step 3) ———
 function buildEventConfigs() {
-    const container = document.getElementById('event-config-container');
-    const selectedArr = EVENTS.filter(e => selectedEvents.has(e.id));
-
-    container.innerHTML = selectedArr.map(event => `
-        <div class="event-config-card">
-            <div class="ecc-header">
-                <span>${event.icon}</span>
-                <h3>${event.name}</h3>
-            </div>
-            <div class="ecc-services">
-                ${event.services.map(svcId => {
-                    const svc = PRICING.services[svcId];
-                    const checked = eventServices[event.id]?.[svcId] ? 'checked' : '';
-                    return `
-                        <label class="service-option">
-                            <input type="checkbox" ${checked} onchange="toggleService('${event.id}', '${svcId}', this.checked)">
-                            <div class="service-option-card">
-                                <div class="svc-icon">${svc.icon}</div>
-                                <div class="svc-name">${svc.name}</div>
-                                <div class="svc-price">${formatCurrency(svc.price)}</div>
-                            </div>
-                        </label>
-                    `;
-                }).join('')}
-            </div>
-        </div>
-    `).join('');
+    document.getElementById('event-config-container').innerHTML = EVENTS.filter(e => selectedEvents.has(e.id)).map(event => `
+        <div class="event-config-card"><div class="ecc-header"><span>${event.icon}</span><h3>${event.name}</h3></div><div class="ecc-services">
+            ${event.services.map(sId => {
+        const s = PRICING.services[sId]; const ck = eventServices[event.id]?.[sId] ? 'checked' : '';
+        return `<label class="service-option"><input type="checkbox" ${ck} onchange="toggleService('${event.id}','${sId}',this.checked)"><div class="service-option-card"><div class="svc-icon">${s.icon}</div><div class="svc-name">${s.name}</div><div class="svc-price">${formatCurrency(s.price)}</div></div></label>`;
+    }).join('')}
+        </div></div>`).join('');
 }
 
-function toggleService(eventId, serviceId, checked) {
-    if (!eventServices[eventId]) eventServices[eventId] = {};
-    eventServices[eventId][serviceId] = checked;
+function toggleService(eid, sid, checked) { if (!eventServices[eid]) eventServices[eid] = {}; eventServices[eid][sid] = checked; recalculate(); }
+
+function changeQty(id, delta) {
+    albumQty[id] = Math.max(0, (albumQty[id] || 0) + delta);
+    const d = document.getElementById(`qty-${id}`); if (d) d.textContent = albumQty[id];
     recalculate();
 }
 
-// ——— Album Qty Control ———
-function changeQty(albumId, delta) {
-    albumQty[albumId] = Math.max(0, (albumQty[albumId] || 0) + delta);
-    const display = document.getElementById(`qty-${albumId}`);
-    if (display) display.textContent = albumQty[albumId];
-    recalculate();
+function handlePrewedToggle(changedId) {
+    const other = changedId === 'prewed-photo' ? 'prewed-both' : 'prewed-photo';
+    const changedEl = document.getElementById(changedId);
+    const otherEl = document.getElementById(other);
+    if (changedEl.checked && otherEl.checked) otherEl.checked = false;
 }
 
-// ——— Calculate Total ———
 function calculateTotal() {
     let total = 0;
-
-    // Service costs per event
-    for (const eventId of selectedEvents) {
-        const services = eventServices[eventId] || {};
-        for (const [svcId, selected] of Object.entries(services)) {
-            if (selected) {
-                total += PRICING.services[svcId].price;
-            }
-        }
-    }
-
-    // Albums
-    for (const [albumId, qty] of Object.entries(albumQty)) {
-        total += PRICING.albums[albumId].price * qty;
-    }
-
-    // Extras
-    for (const [extraId, config] of Object.entries(PRICING.extras)) {
-        const el = document.getElementById(extraId);
-        if (el && el.checked) total += config.price;
-    }
-
-    // Post production
-    const ppRadio = document.querySelector('input[name="post-production"]:checked');
-    if (ppRadio) {
-        total += PRICING.postProduction[ppRadio.value].adjustment;
-    }
-
+    for (const eid of selectedEvents) { const svcs = eventServices[eid] || {}; for (const [sid, sel] of Object.entries(svcs)) { if (sel) total += PRICING.services[sid].price; } }
+    for (const [aid, qty] of Object.entries(albumQty)) total += PRICING.albums[aid].price * qty;
+    for (const [eid, cfg] of Object.entries(PRICING.extras)) { const el = document.getElementById(eid); if (el && el.checked) total += cfg.price; }
+    const pp = document.querySelector('input[name="post-production"]:checked'); if (pp) total += PRICING.postProduction[pp.value].adjustment;
     return total;
 }
 
-function recalculate() {
-    const total = calculateTotal();
-    const display = document.getElementById('running-amount');
-    if (display) display.textContent = formatCurrency(total);
-}
+function recalculate() { const d = document.getElementById('running-amount'); if (d) d.textContent = formatCurrency(calculateTotal()); }
+function formatCurrency(a) { return '₹' + a.toLocaleString('en-IN'); }
 
-function formatCurrency(amount) {
-    return '₹' + amount.toLocaleString('en-IN');
-}
-
-// ——— Build Summary (Step 5) ———
+// Summary
 function buildSummary() {
-    const container = document.getElementById('summary-container');
-    let html = '';
+    const c = document.getElementById('summary-container');
+    let h = '';
+    h += `<div class="summary-section"><div class="summary-section-title">👤 Customer Details</div>
+        <div class="summary-line"><span class="sl-label">Name</span><span class="sl-value">${document.getElementById('customer-name').value}</span></div>
+        <div class="summary-line"><span class="sl-label">Mobile</span><span class="sl-value">${document.getElementById('customer-mobile').value}</span></div>
+        ${document.getElementById('customer-email').value ? `<div class="summary-line"><span class="sl-label">Email</span><span class="sl-value">${document.getElementById('customer-email').value}</span></div>` : ''}
+        ${document.getElementById('wedding-date').value ? `<div class="summary-line"><span class="sl-label">Wedding Date</span><span class="sl-value">${new Date(document.getElementById('wedding-date').value).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span></div>` : ''}
+        ${document.getElementById('wedding-city').value ? `<div class="summary-line"><span class="sl-label">City</span><span class="sl-value">${document.getElementById('wedding-city').value}</span></div>` : ''}
+    </div>`;
 
-    // Customer info
-    html += `
-        <div class="summary-section">
-            <div class="summary-section-title">👤 Customer Details</div>
-            <div class="summary-line"><span class="sl-label">Name</span><span class="sl-value">${document.getElementById('customer-name').value}</span></div>
-            <div class="summary-line"><span class="sl-label">Mobile</span><span class="sl-value">${document.getElementById('customer-mobile').value}</span></div>
-            ${document.getElementById('customer-email').value ? `<div class="summary-line"><span class="sl-label">Email</span><span class="sl-value">${document.getElementById('customer-email').value}</span></div>` : ''}
-            ${document.getElementById('wedding-date').value ? `<div class="summary-line"><span class="sl-label">Wedding Date</span><span class="sl-value">${new Date(document.getElementById('wedding-date').value).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span></div>` : ''}
-            ${document.getElementById('wedding-city').value ? `<div class="summary-line"><span class="sl-label">City</span><span class="sl-value">${document.getElementById('wedding-city').value}</span></div>` : ''}
-        </div>
-    `;
-
-    // Events & Services
-    let eventTotal = 0;
-    const selectedArr = EVENTS.filter(e => selectedEvents.has(e.id));
-    if (selectedArr.length > 0) {
-        html += `<div class="summary-section"><div class="summary-section-title">🎊 Events & Services</div>`;
-        selectedArr.forEach(event => {
-            const services = eventServices[event.id] || {};
-            const activeServices = Object.entries(services).filter(([, v]) => v);
-            if (activeServices.length > 0) {
-                html += `<div style="margin-bottom:12px;"><strong style="color:var(--color-text);font-size:0.9rem;">${event.icon} ${event.name}</strong>`;
-                activeServices.forEach(([svcId]) => {
-                    const svc = PRICING.services[svcId];
-                    eventTotal += svc.price;
-                    html += `<div class="summary-line"><span class="sl-label">&nbsp;&nbsp;${svc.name}</span><span class="sl-value">${formatCurrency(svc.price)}</span></div>`;
-                });
-                html += '</div>';
-            }
+    const sel = EVENTS.filter(e => selectedEvents.has(e.id));
+    if (sel.length) {
+        h += `<div class="summary-section"><div class="summary-section-title">🎊 Events & Services</div>`;
+        sel.forEach(ev => {
+            const svcs = Object.entries(eventServices[ev.id] || {}).filter(([, v]) => v);
+            if (svcs.length) { h += `<div style="margin-bottom:10px"><strong style="color:var(--text);font-size:.88rem">${ev.icon} ${ev.name}</strong>`; svcs.forEach(([sid]) => { h += `<div class="summary-line"><span class="sl-label">&nbsp;&nbsp;${PRICING.services[sid].name}</span><span class="sl-value">${formatCurrency(PRICING.services[sid].price)}</span></div>`; }); h += '</div>'; }
         });
-        html += '</div>';
+        h += '</div>';
     }
 
-    // Albums
-    let albumTotal = 0;
-    const activeAlbums = Object.entries(albumQty).filter(([, qty]) => qty > 0);
-    if (activeAlbums.length > 0) {
-        html += `<div class="summary-section"><div class="summary-section-title">📖 Albums</div>`;
-        activeAlbums.forEach(([albumId, qty]) => {
-            const album = PRICING.albums[albumId];
-            const cost = album.price * qty;
-            albumTotal += cost;
-            html += `<div class="summary-line"><span class="sl-label">${album.name} × ${qty}</span><span class="sl-value">${formatCurrency(cost)}</span></div>`;
-        });
-        html += '</div>';
-    }
+    const aa = Object.entries(albumQty).filter(([, q]) => q > 0);
+    if (aa.length) { h += `<div class="summary-section"><div class="summary-section-title">📖 Albums</div>`; aa.forEach(([aid, qty]) => { const a = PRICING.albums[aid]; h += `<div class="summary-line"><span class="sl-label">${a.name} × ${qty}</span><span class="sl-value">${formatCurrency(a.price * qty)}</span></div>`; }); h += '</div>'; }
 
-    // Extras
-    let extrasTotal = 0;
-    const extrasHtml = [];
-    for (const [extraId, config] of Object.entries(PRICING.extras)) {
-        const el = document.getElementById(extraId);
-        if (el && el.checked) {
-            extrasTotal += config.price;
-            extrasHtml.push(`<div class="summary-line"><span class="sl-label">${config.name}</span><span class="sl-value">${formatCurrency(config.price)}</span></div>`);
-        }
-    }
+    const eh = [];
+    for (const [eid, cfg] of Object.entries(PRICING.extras)) { const el = document.getElementById(eid); if (el && el.checked) eh.push(`<div class="summary-line"><span class="sl-label">${cfg.name}</span><span class="sl-value">${formatCurrency(cfg.price)}</span></div>`); }
+    const pp = document.querySelector('input[name="post-production"]:checked');
+    if (pp && PRICING.postProduction[pp.value].adjustment !== 0) eh.push(`<div class="summary-line"><span class="sl-label">Post Production: ${PRICING.postProduction[pp.value].label}</span><span class="sl-value">${PRICING.postProduction[pp.value].adjustment > 0 ? '+' : ''}${formatCurrency(PRICING.postProduction[pp.value].adjustment)}</span></div>`);
+    if (eh.length) h += `<div class="summary-section"><div class="summary-section-title">✨ Add-ons & Extras</div>${eh.join('')}</div>`;
 
-    // Post production
-    const ppRadio = document.querySelector('input[name="post-production"]:checked');
-    let ppAdjustment = 0;
-    let ppLabel = '';
-    if (ppRadio) {
-        ppAdjustment = PRICING.postProduction[ppRadio.value].adjustment;
-        ppLabel = PRICING.postProduction[ppRadio.value].label;
-        if (ppAdjustment !== 0) {
-            extrasHtml.push(`<div class="summary-line"><span class="sl-label">Post Production: ${ppLabel}</span><span class="sl-value">${ppAdjustment > 0 ? '+' : ''}${formatCurrency(ppAdjustment)}</span></div>`);
-            extrasTotal += ppAdjustment;
-        }
-    }
-
-    if (extrasHtml.length > 0) {
-        html += `<div class="summary-section"><div class="summary-section-title">✨ Add-ons & Extras</div>${extrasHtml.join('')}</div>`;
-    }
-
-    const grandTotal = calculateTotal();
-    html += `
-        <div class="summary-total">
-            <span class="st-label">Grand Total</span>
-            <span class="st-value">${formatCurrency(grandTotal)}</span>
-        </div>
-    `;
-
-    container.innerHTML = html;
+    h += `<div class="summary-total"><span class="st-label">Grand Total</span><span class="st-value">${formatCurrency(calculateTotal())}</span></div>`;
+    c.innerHTML = h;
 }
 
-// ——— PDF Download ———
+// ═══════════════════════════════════════
+// PDF GENERATION — Cream/Gold Theme
+// Matching the reference quotation style
+// ═══════════════════════════════════════
+
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = 210;
-    const pageHeight = 297;
-    const margin = 20;
-    const contentWidth = pageWidth - 2 * margin;
-    let y = margin;
+    const W = 210, H = 297, M = 15;
+    const CW = W - 2 * M;
 
-    // Helper functions
-    const addLine = (y1) => {
-        doc.setDrawColor(201, 149, 107);
-        doc.setLineWidth(0.5);
-        doc.line(margin, y1, pageWidth - margin, y1);
-    };
+    // Colors
+    const CREAM = [250, 247, 242];
+    const GOLD = [184, 134, 11];
+    const GOLD_LIGHT = [201, 149, 107];
+    const DARK = [40, 35, 30];
+    const TEXT_DARK = [50, 45, 40];
+    const TEXT_MED = [120, 110, 100];
 
-    const checkPageBreak = (neededHeight) => {
-        if (y + neededHeight > pageHeight - margin) {
-            doc.addPage();
-            y = margin;
-            return true;
+    // === HELPER FUNCTIONS ===
+    const setC = (c) => doc.setTextColor(c[0], c[1], c[2]);
+    const setD = (c) => doc.setDrawColor(c[0], c[1], c[2]);
+    const setF = (c) => doc.setFillColor(c[0], c[1], c[2]);
+
+    function drawCreamBg() {
+        setF(CREAM); doc.rect(0, 0, W, H, 'F');
+    }
+
+    function drawGoldenBorder(m) {
+        m = m || 8;
+        setD(GOLD); doc.setLineWidth(0.8);
+        doc.rect(m, m, W - 2 * m, H - 2 * m);
+        doc.setLineWidth(0.3);
+        doc.rect(m + 2, m + 2, W - 2 * m - 4, H - 2 * m - 4);
+    }
+
+    function drawCornerOrnament(x, y, size, flip) {
+        setD(GOLD_LIGHT); doc.setLineWidth(0.5);
+        const sx = flip ? -1 : 1;
+        const sy = flip ? -1 : 1;
+        // L-shape with curl
+        doc.line(x, y, x + sx * size, y);
+        doc.line(x, y, x, y + sy * size);
+        // Small dots
+        setF(GOLD_LIGHT);
+        doc.circle(x + sx * 2, y + sy * 2, 0.8, 'F');
+        doc.circle(x + sx * (size - 2), y, 0.8, 'F');
+        doc.circle(x, y + sy * (size - 2), 0.8, 'F');
+        // Decorative curl
+        doc.setLineWidth(0.3);
+        doc.line(x + sx * 4, y + sy * 1, x + sx * 6, y + sy * 3);
+        doc.line(x + sx * 1, y + sy * 4, x + sx * 3, y + sy * 6);
+    }
+
+    function drawDecorativeLine(x, y, width) {
+        const cx = x + width / 2;
+        setD(GOLD); doc.setLineWidth(0.4);
+        doc.line(x, y, x + width, y);
+        // Center diamond
+        setF(GOLD);
+        doc.triangle(cx - 2, y, cx, y - 2, cx + 2, y);
+        doc.triangle(cx - 2, y, cx, y + 2, cx + 2, y);
+    }
+
+    function drawSectionHeader(text, y) {
+        setC(GOLD);
+        doc.setFontSize(13);
+        doc.setFont('helvetica', 'bold');
+        const tW = doc.getTextWidth(text);
+        const cx = W / 2;
+        doc.text(text, cx, y, { align: 'center' });
+        // Underline ornament
+        const lineW = Math.max(tW + 10, 40);
+        setD(GOLD); doc.setLineWidth(0.4);
+        doc.line(cx - lineW / 2, y + 2, cx + lineW / 2, y + 2);
+        // Small end dots
+        setF(GOLD);
+        doc.circle(cx - lineW / 2, y + 2, 0.6, 'F');
+        doc.circle(cx + lineW / 2, y + 2, 0.6, 'F');
+        return y + 8;
+    }
+
+    function addAsset(key, x, y, w, h) {
+        if (cachedAssets[key]) {
+            try { doc.addImage(cachedAssets[key], 'PNG', x, y, w, h); } catch (e) { }
         }
+    }
+
+    function checkPage(needed) {
+        if (currentY + needed > H - M - 10) { doc.addPage(); drawCreamBg(); drawGoldenBorder(); drawPageCorners(); currentY = M + 15; return true; }
         return false;
-    };
+    }
 
-    // ——— Header ———
-    doc.setFillColor(26, 26, 36);
-    doc.rect(0, 0, pageWidth, 55, 'F');
+    function drawPageCorners() {
+        drawCornerOrnament(12, 12, 15, false);        // top-left
+        drawCornerOrnament(W - 12, 12, 15, false);       // top-right (flipped)
+        drawCornerOrnament(12, H - 12, 15, false);       // bottom-left
+        drawCornerOrnament(W - 12, H - 12, 15, true);      // bottom-right
+        // Redraw with proper flip
+        setD(GOLD_LIGHT); doc.setLineWidth(0.5);
+        // top-right
+        doc.line(W - 12, 12, W - 12 - 15, 12); doc.line(W - 12, 12, W - 12, 12 + 15);
+        setF(GOLD_LIGHT); doc.circle(W - 14, 14, 0.8, 'F');
+        // bottom-left
+        doc.line(12, H - 12, 12 + 15, H - 12); doc.line(12, H - 12, 12, H - 12 - 15);
+        doc.circle(14, H - 14, 0.8, 'F');
+        // bottom-right
+        doc.line(W - 12, H - 12, W - 12 - 15, H - 12); doc.line(W - 12, H - 12, W - 12, H - 12 - 15);
+        doc.circle(W - 14, H - 14, 0.8, 'F');
+    }
 
-    doc.setTextColor(201, 149, 107);
-    doc.setFontSize(28);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Shots by Siri', margin, 25);
+    let currentY = 0;
 
-    doc.setTextColor(157, 153, 168);
-    doc.setFontSize(10);
+    // ═══════════════════════
+    // PAGE 1 — COVER
+    // ═══════════════════════
+    drawCreamBg();
+    drawGoldenBorder();
+
+    // Decorative wavy lines top-right
+    setD(GOLD_LIGHT); doc.setLineWidth(0.2);
+    for (let i = 0; i < 6; i++) {
+        const startX = W - 50 + i * 3;
+        for (let j = 0; j < 20; j++) {
+            const x1 = startX + j * 3;
+            const y1 = 15 + Math.sin(j * 0.5 + i * 0.3) * 3 + i * 4;
+            const x2 = x1 + 3;
+            const y2 = 15 + Math.sin((j + 1) * 0.5 + i * 0.3) * 3 + i * 4;
+            if (x1 < W - 10) doc.line(x1, y1, x2, y2);
+        }
+    }
+
+    // Lantern top-left
+    addAsset('assets/lantern.png', 15, 15, 18, 35);
+
+    // Logo centered
+    let logoY = 70;
+    if (cachedAssets['assets/logo.png']) {
+        addAsset('assets/logo.png', W / 2 - 35, 55, 70, 50);
+        logoY = 115;
+    } else {
+        // Text fallback
+        setC(GOLD);
+        doc.setFontSize(36);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Shots by Siri', W / 2, 90, { align: 'center' });
+        logoY = 100;
+    }
+
+    // Photography subtitle
+    setC(GOLD);
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    doc.text('Wedding Photography & Videography', margin, 33);
+    doc.text('— P H O T O G R A P H Y —', W / 2, logoY + 5, { align: 'center' });
 
-    doc.setTextColor(240, 236, 230);
-    doc.setFontSize(10);
-    doc.text('+91 98765 43210  |  hello@shotsbysiri.com', margin, 42);
+    // Decorative line
+    drawDecorativeLine(W / 2 - 40, logoY + 15, 80);
 
-    const today = new Date();
-    doc.setTextColor(157, 153, 168);
+    // WEDDING PHOTOGRAPHY QUOTATION
+    setC(DARK);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('WEDDING PHOTOGRAPHY', W / 2, logoY + 35, { align: 'center' });
+    doc.text('QUOTATION', W / 2, logoY + 44, { align: 'center' });
+
+    // Elephant motif
+    addAsset('assets/elephant.png', 20, H - 75, 30, 28);
+
+    // Prepared for
+    setC(TEXT_MED);
     doc.setFontSize(9);
-    doc.text(`Quote Date: ${today.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}`, pageWidth - margin, 25, { align: 'right' });
-    doc.text(`Quote #: SBS-${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}-${Math.floor(Math.random() * 9000) + 1000}`, pageWidth - margin, 33, { align: 'right' });
-
-    y = 65;
-
-    // ——— Customer Details ———
-    doc.setFillColor(40, 40, 55);
-    doc.roundedRect(margin, y, contentWidth, 35, 3, 3, 'F');
-
-    doc.setTextColor(201, 149, 107);
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Prepared For:', margin + 5, y + 8);
-
-    doc.setTextColor(240, 236, 230);
-    doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text(document.getElementById('customer-name').value, margin + 5, y + 16);
-    doc.text('Mobile: ' + document.getElementById('customer-mobile').value, margin + 5, y + 23);
+    doc.text('Prepared for', W / 2, logoY + 65, { align: 'center' });
+    setC(DARK);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text(document.getElementById('customer-name').value || 'Customer', W / 2, logoY + 74, { align: 'center' });
 
-    const rightCol = pageWidth - margin - 5;
-    if (document.getElementById('customer-email').value) {
-        doc.text('Email: ' + document.getElementById('customer-email').value, rightCol, y + 16, { align: 'right' });
-    }
-    if (document.getElementById('wedding-date').value) {
-        doc.text('Wedding: ' + new Date(document.getElementById('wedding-date').value).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }), rightCol, y + 23, { align: 'right' });
-    }
-    if (document.getElementById('wedding-city').value) {
-        doc.text('City: ' + document.getElementById('wedding-city').value, rightCol, y + 30, { align: 'right' });
-    }
+    // Date
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-');
+    setC(TEXT_MED);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text(dateStr, W - M - 10, H - M - 15, { align: 'right' });
 
-    y += 45;
+    // Quote reference
+    const quoteRef = `SBS-${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}-${Math.floor(Math.random() * 9000) + 1000}`;
+    doc.setFontSize(8);
+    doc.text(`Ref: ${quoteRef}`, W - M - 10, H - M - 10, { align: 'right' });
 
-    // ——— Events & Services Table ———
-    const selectedArr = EVENTS.filter(e => selectedEvents.has(e.id));
-    let hasEventServices = false;
+    // ═══════════════════════
+    // PAGE 2+ — CONTENT
+    // ═══════════════════════
+    doc.addPage();
+    drawCreamBg();
+    drawGoldenBorder();
+    drawPageCorners();
 
-    selectedArr.forEach(event => {
-        const services = eventServices[event.id] || {};
-        const activeServices = Object.entries(services).filter(([, v]) => v);
-        if (activeServices.length > 0) hasEventServices = true;
+    // Floral corner bottom-left
+    addAsset('assets/floral-corner.png', 8, H - 68, 55, 55);
+
+    // Lantern top-left
+    addAsset('assets/lantern.png', 12, 12, 14, 28);
+
+    currentY = M + 20;
+
+    // Customer info box
+    setF([245, 241, 235]); doc.roundedRect(M + 5, currentY - 3, CW - 10, 22, 2, 2, 'F');
+    setC(TEXT_MED); doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+    doc.text('Customer: ' + (document.getElementById('customer-name').value || ''), M + 10, currentY + 4);
+    doc.text('Mobile: ' + (document.getElementById('customer-mobile').value || ''), M + 10, currentY + 10);
+    const email = document.getElementById('customer-email').value;
+    const wdate = document.getElementById('wedding-date').value;
+    const city = document.getElementById('wedding-city').value;
+    if (email) doc.text('Email: ' + email, W / 2 + 5, currentY + 4);
+    if (wdate) doc.text('Wedding: ' + new Date(wdate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }), W / 2 + 5, currentY + 10);
+    if (city) doc.text('City: ' + city, W / 2 + 5, currentY + 16);
+    currentY += 28;
+
+    // Events & Services
+    const selEvents = EVENTS.filter(e => selectedEvents.has(e.id));
+    selEvents.forEach(event => {
+        const svcs = eventServices[event.id] || {};
+        const active = Object.entries(svcs).filter(([, v]) => v);
+        if (active.length === 0) return;
+
+        checkPage(15 + active.length * 6);
+
+        currentY = drawSectionHeader('FOR  ' + event.name.toUpperCase(), currentY);
+
+        active.forEach(([sId]) => {
+            const svc = PRICING.services[sId];
+            setC(TEXT_DARK); doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+            doc.text(svc.name, W / 2, currentY, { align: 'center' });
+            currentY += 6;
+        });
+        currentY += 4;
     });
 
-    if (hasEventServices) {
-        doc.setTextColor(201, 149, 107);
-        doc.setFontSize(13);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Events & Services', margin, y);
-        y += 4;
-        addLine(y);
-        y += 8;
-
-        // Table header
-        doc.setFillColor(40, 40, 55);
-        doc.roundedRect(margin, y - 3, contentWidth, 8, 1, 1, 'F');
-        doc.setTextColor(201, 149, 107);
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'bold');
-        doc.text('EVENT', margin + 3, y + 2);
-        doc.text('SERVICE', margin + 60, y + 2);
-        doc.text('AMOUNT', pageWidth - margin - 3, y + 2, { align: 'right' });
-        y += 10;
-
-        selectedArr.forEach(event => {
-            const services = eventServices[event.id] || {};
-            const activeServices = Object.entries(services).filter(([, v]) => v);
-
-            if (activeServices.length > 0) {
-                checkPageBreak(10 + activeServices.length * 7);
-
-                doc.setTextColor(240, 236, 230);
-                doc.setFontSize(10);
-                doc.setFont('helvetica', 'bold');
-                doc.text(`${event.name}`, margin + 3, y);
-                y += 1;
-
-                activeServices.forEach(([svcId], idx) => {
-                    const svc = PRICING.services[svcId];
-                    doc.setTextColor(157, 153, 168);
-                    doc.setFontSize(9);
-                    doc.setFont('helvetica', 'normal');
-                    doc.text(svc.name, margin + 60, y + 5);
-                    doc.setTextColor(240, 236, 230);
-                    doc.text(formatCurrency(svc.price), pageWidth - margin - 3, y + 5, { align: 'right' });
-                    y += 7;
-                });
-
-                doc.setDrawColor(50, 50, 65);
-                doc.setLineWidth(0.2);
-                doc.line(margin, y + 2, pageWidth - margin, y + 2);
-                y += 6;
-            }
-        });
-    }
-
-    // ——— Albums ———
-    const activeAlbums = Object.entries(albumQty).filter(([, qty]) => qty > 0);
-    if (activeAlbums.length > 0) {
-        checkPageBreak(20 + activeAlbums.length * 8);
-        y += 5;
-        doc.setTextColor(201, 149, 107);
-        doc.setFontSize(13);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Albums', margin, y);
-        y += 4;
-        addLine(y);
-        y += 8;
-
-        activeAlbums.forEach(([albumId, qty]) => {
-            const album = PRICING.albums[albumId];
-            const cost = album.price * qty;
-            doc.setTextColor(240, 236, 230);
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`${album.name}  ×  ${qty}`, margin + 3, y);
-            doc.text(formatCurrency(cost), pageWidth - margin - 3, y, { align: 'right' });
-            y += 8;
-        });
-    }
-
-    // ——— Extras ———
+    // Albums
+    const activeAlbums = Object.entries(albumQty).filter(([, q]) => q > 0);
+    // Extras
     const extrasItems = [];
-    for (const [extraId, config] of Object.entries(PRICING.extras)) {
-        const el = document.getElementById(extraId);
-        if (el && el.checked) {
-            extrasItems.push({ name: config.name, price: config.price });
-        }
-    }
+    for (const [eid, cfg] of Object.entries(PRICING.extras)) { const el = document.getElementById(eid); if (el && el.checked) extrasItems.push(cfg); }
 
-    const ppRadio = document.querySelector('input[name="post-production"]:checked');
-    if (ppRadio && PRICING.postProduction[ppRadio.value].adjustment !== 0) {
-        extrasItems.push({
-            name: `Post Production: ${PRICING.postProduction[ppRadio.value].label}`,
-            price: PRICING.postProduction[ppRadio.value].adjustment
+    if (activeAlbums.length > 0 || extrasItems.length > 0) {
+        checkPage(15 + (activeAlbums.length + extrasItems.length) * 6);
+        currentY = drawSectionHeader('FOR  COMPLEMENTARY', currentY);
+
+        activeAlbums.forEach(([aid, qty]) => {
+            setC(TEXT_DARK); doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+            doc.text(`${qty} ${PRICING.albums[aid].name}`, W / 2, currentY, { align: 'center' });
+            currentY += 6;
         });
-    }
-
-    if (extrasItems.length > 0) {
-        checkPageBreak(20 + extrasItems.length * 8);
-        y += 5;
-        doc.setTextColor(201, 149, 107);
-        doc.setFontSize(13);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Add-ons & Extras', margin, y);
-        y += 4;
-        addLine(y);
-        y += 8;
 
         extrasItems.forEach(item => {
-            doc.setTextColor(240, 236, 230);
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'normal');
-            doc.text(item.name, margin + 3, y);
-            doc.text((item.price > 0 ? '' : '') + formatCurrency(item.price), pageWidth - margin - 3, y, { align: 'right' });
-            y += 8;
+            setC(TEXT_DARK); doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+            doc.text(item.name, W / 2, currentY, { align: 'center' });
+            currentY += 6;
         });
+
+        const pp = document.querySelector('input[name="post-production"]:checked');
+        if (pp) {
+            doc.text('Post Production: ' + PRICING.postProduction[pp.value].label, W / 2, currentY, { align: 'center' });
+            currentY += 6;
+        }
+        currentY += 4;
     }
 
-    // ——— Grand Total ———
-    checkPageBreak(25);
-    y += 8;
-    const grandTotal = calculateTotal();
-    doc.setFillColor(201, 149, 107);
-    doc.roundedRect(margin, y, contentWidth, 14, 3, 3, 'F');
-    doc.setTextColor(26, 26, 36);
+    // Grand Total
+    checkPage(30);
+    currentY += 5;
+    drawDecorativeLine(W / 2 - 50, currentY, 100);
+    currentY += 12;
+
+    setC(GOLD);
     doc.setFontSize(13);
     doc.setFont('helvetica', 'bold');
-    doc.text('TOTAL ESTIMATED PRICE', margin + 5, y + 9.5);
-    doc.setFontSize(14);
-    doc.text(formatCurrency(grandTotal), pageWidth - margin - 5, y + 9.5, { align: 'right' });
+    doc.text('TOTAL  :', W / 2 - 15, currentY, { align: 'right' });
 
-    y += 25;
-
-    // ——— Terms ———
-    checkPageBreak(50);
-    doc.setTextColor(201, 149, 107);
-    doc.setFontSize(10);
+    const grandTotal = calculateTotal();
+    doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
-    doc.text('Terms & Conditions', margin, y);
-    y += 2;
-    addLine(y);
-    y += 7;
+    doc.text(formatCurrency(grandTotal).replace('₹', ''), W / 2 - 10, currentY);
+    // Rupee symbol
+    doc.setFontSize(14);
+    doc.text('Rs.', W / 2 - 12 - doc.getTextWidth(formatCurrency(grandTotal).replace('₹', '')) - 2, currentY);
+
+    currentY += 15;
+
+    // Golden page curl effect (bottom right)
+    setF(GOLD);
+    const cx = W - 10, cy = H - 10;
+    doc.triangle(cx, cy - 20, cx - 20, cy, cx, cy, 'F');
+    setF([220, 180, 100]);
+    doc.triangle(cx, cy - 20, cx - 15, cy - 5, cx, cy, 'F');
+
+    // Elephant bottom-right
+    addAsset('assets/elephant.png', W - 55, H - 68, 30, 28);
+
+    // ═══════════════════════
+    // PAGE 3 — TERMS
+    // ═══════════════════════
+    doc.addPage();
+    drawCreamBg();
+    drawGoldenBorder();
+    drawPageCorners();
+    addAsset('assets/floral-corner.png', 8, H - 68, 55, 55);
+
+    currentY = M + 18;
+    currentY = drawSectionHeader('TERMS  &  CONDITIONS', currentY);
 
     const terms = [
         'This is an estimated quotation. Final price may vary based on discussion.',
@@ -733,42 +670,41 @@ function downloadPDF() {
         '50% advance at booking, balance payable on the wedding day.',
         'Output delivery timeline depends on timely payment.',
         'If another photography team is hired, the contract will be cancelled immediately.',
-        'In case of data loss, re-copying is available at ₹29,999 for lifelong memories.',
+        'Original data can be received via client-provided drive.',
+        'In case of data loss, re-copying is available at Rs. 29,999 for lifelong memories.',
+        'We prioritise careful handling of your original data at all times.',
     ];
 
-    doc.setTextColor(157, 153, 168);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    terms.forEach((term, i) => {
-        checkPageBreak(6);
-        doc.text(`${i + 1}. ${term}`, margin + 3, y);
-        y += 5;
+    setC(TEXT_DARK); doc.setFontSize(9.5); doc.setFont('helvetica', 'normal');
+    terms.forEach((t, i) => {
+        doc.text(`${i + 1}. ${t}`, W / 2, currentY, { align: 'center', maxWidth: CW - 20 });
+        currentY += t.length > 70 ? 10 : 7;
     });
 
-    // ——— Footer ———
-    y += 10;
-    checkPageBreak(15);
-    doc.setDrawColor(201, 149, 107);
-    doc.setLineWidth(0.3);
-    doc.line(margin, y, pageWidth - margin, y);
-    y += 6;
-    doc.setTextColor(157, 153, 168);
-    doc.setFontSize(8);
-    doc.text('Shots by Siri  |  +91 98765 43210  |  hello@shotsbysiri.com  |  Hyderabad, Telangana', pageWidth / 2, y, { align: 'center' });
-    y += 4;
-    doc.text('© 2026 Shots by Siri. All rights reserved.', pageWidth / 2, y, { align: 'center' });
+    currentY += 10;
+    drawDecorativeLine(W / 2 - 30, currentY, 60);
+    currentY += 15;
 
-    // Save PDF
+    // Contact info
+    setC(GOLD); doc.setFontSize(11); doc.setFont('helvetica', 'bold');
+    doc.text('Shots by Siri Photography', W / 2, currentY, { align: 'center' });
+    currentY += 7;
+    setC(TEXT_MED); doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+    doc.text('+91 98765 43210  |  hello@shotsbysiri.com', W / 2, currentY, { align: 'center' });
+    currentY += 5;
+    doc.text('Hyderabad, Telangana', W / 2, currentY, { align: 'center' });
+    currentY += 10;
+    doc.setFontSize(7);
+    doc.text('© 2026 Shots by Siri. All rights reserved.', W / 2, currentY, { align: 'center' });
+
+    // Save
     const customerName = document.getElementById('customer-name').value.replace(/\s+/g, '_') || 'Customer';
     doc.save(`ShotsBySiri_Quote_${customerName}.pdf`);
-
     showToast('PDF downloaded successfully! ✨', 'success');
-
-    // Save to Google Sheets
     saveToGoogleSheets();
 }
 
-// ——— Google Sheets Integration ———
+// ——— Google Sheets ———
 async function saveToGoogleSheets() {
     const data = {
         timestamp: new Date().toISOString(),
@@ -781,69 +717,28 @@ async function saveToGoogleSheets() {
         totalAmount: calculateTotal(),
         breakdown: getBreakdownText(),
     };
-
-    // If Google Sheets URL is configured, send data
     if (GOOGLE_SHEETS_URL && GOOGLE_SHEETS_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
-        try {
-            await fetch(GOOGLE_SHEETS_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
-            });
-            console.log('Data saved to Google Sheets successfully');
-        } catch (error) {
-            console.error('Error saving to Google Sheets:', error);
-        }
-    } else {
-        console.log('Google Sheets integration not configured. Data to be saved:', data);
-    }
+        try { await fetch(GOOGLE_SHEETS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); } catch (e) { console.error('Sheets error:', e); }
+    } else { console.log('Google Sheets not configured. Data:', data); }
 }
 
 function getBreakdownText() {
     let lines = [];
-
-    const selectedArr = EVENTS.filter(e => selectedEvents.has(e.id));
-    selectedArr.forEach(event => {
-        const services = eventServices[event.id] || {};
-        const activeServices = Object.entries(services).filter(([, v]) => v);
-        if (activeServices.length > 0) {
-            lines.push(event.name + ': ' + activeServices.map(([sId]) => PRICING.services[sId].name).join(', '));
-        }
+    EVENTS.filter(e => selectedEvents.has(e.id)).forEach(ev => {
+        const svcs = Object.entries(eventServices[ev.id] || {}).filter(([, v]) => v);
+        if (svcs.length) lines.push(ev.name + ': ' + svcs.map(([s]) => PRICING.services[s].name).join(', '));
     });
-
-    Object.entries(albumQty).forEach(([aId, qty]) => {
-        if (qty > 0) lines.push(`${PRICING.albums[aId].name} × ${qty}`);
-    });
-
-    for (const [extraId, config] of Object.entries(PRICING.extras)) {
-        const el = document.getElementById(extraId);
-        if (el && el.checked) lines.push(config.name);
-    }
-
-    const ppRadio = document.querySelector('input[name="post-production"]:checked');
-    if (ppRadio) lines.push('Post Production: ' + PRICING.postProduction[ppRadio.value].label);
-
+    Object.entries(albumQty).forEach(([a, q]) => { if (q > 0) lines.push(`${PRICING.albums[a].name} × ${q}`); });
+    for (const [eid, cfg] of Object.entries(PRICING.extras)) { const el = document.getElementById(eid); if (el && el.checked) lines.push(cfg.name); }
+    const pp = document.querySelector('input[name="post-production"]:checked'); if (pp) lines.push('PP: ' + PRICING.postProduction[pp.value].label);
     return lines.join(' | ');
 }
 
-// ——— Toast Notification ———
-function showToast(message, type = 'success') {
-    const existing = document.querySelector('.toast');
-    if (existing) existing.remove();
-
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.innerHTML = `
-        <span class="toast-icon">${type === 'success' ? '✅' : '⚠️'}</span>
-        <span class="toast-message">${message}</span>
-    `;
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(20px)';
-        toast.style.transition = 'all 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, 3500);
+// ——— Toast ———
+function showToast(msg, type = 'success') {
+    const ex = document.querySelector('.toast'); if (ex) ex.remove();
+    const t = document.createElement('div'); t.className = `toast ${type}`;
+    t.innerHTML = `<span class="toast-icon">${type === 'success' ? '✅' : '⚠️'}</span><span class="toast-message">${msg}</span>`;
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(20px)'; t.style.transition = 'all .3s'; setTimeout(() => t.remove(), 300); }, 3500);
 }

@@ -1,87 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shots by Siri — Build Your Wedding Quote</title>
-    <meta name="description" content="Create your personalized South Indian wedding photography & videography quotation. Choose from traditional, candid, drone, LED screen services for your dream wedding.">
-    <meta name="keywords" content="wedding photography, south indian wedding, candid photography, drone videography, pellikoduku, engagement, pre-wedding shoot">
-    <meta property="og:title" content="Shots by Siri — Build Your Wedding Quote">
-    <meta property="og:description" content="Create your personalized South Indian wedding photography & videography quotation instantly.">
+    <title>Shots by Siri — Wedding Photography & Videography</title>
+    <meta name="description"
+        content="Create your personalized South Indian wedding photography & videography quotation. Traditional, candid, drone, LED screen services for your dream wedding.">
+    <meta name="keywords"
+        content="wedding photography, south indian wedding, candid photography, drone videography, pellikoduku, engagement, pre-wedding shoot, shots by siri">
+    <meta property="og:title" content="Shots by Siri — Wedding Photography & Videography">
+    <meta property="og:description"
+        content="Create your personalized wedding photography quotation instantly. South India's finest wedding coverage.">
     <meta property="og:type" content="website">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Great+Vibes&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="index.css">
-    <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
+
 <body>
-    <!-- ======= HERO / LANDING SECTION ======= -->
+    <!-- Cursor Glow -->
+    <div class="cursor-glow" id="cursor-glow"></div>
+
+    <!-- ======= HERO SECTION ======= -->
     <section id="hero-section" class="hero">
-        <div class="hero-overlay"></div>
+        <!-- Animated Background -->
+        <div class="hero-bg-layers">
+            <div class="bg-gradient-orb orb-1"></div>
+            <div class="bg-gradient-orb orb-2"></div>
+            <div class="bg-gradient-orb orb-3"></div>
+            <div class="bg-noise"></div>
+        </div>
         <div class="floating-petals" id="floating-petals"></div>
-        <nav class="hero-nav">
+        <div class="sparkle-container" id="sparkle-container"></div>
+
+        <!-- Navigation -->
+        <nav class="hero-nav" id="main-nav">
             <div class="logo">
-                <span class="logo-icon">📸</span>
-                <span class="logo-text">Shots by Siri</span>
+                <img src="assets/logo.png" alt="Shots by Siri" class="logo-img"
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                <div class="logo-fallback" style="display:none">
+                    <span class="logo-icon">📸</span>
+                    <span class="logo-text">Shots by Siri</span>
+                </div>
             </div>
-            <div class="nav-links">
+            <div class="nav-links" id="nav-links">
                 <a href="#services-preview">Services</a>
                 <a href="#how-it-works">How it Works</a>
+                <a href="#gallery-section">Gallery</a>
                 <a href="#testimonials">Testimonials</a>
-                <a href="javascript:void(0)" class="nav-cta" onclick="startQuoteBuilder()">Get Quote</a>
+                <a href="javascript:void(0)" class="nav-cta" onclick="startQuoteBuilder()">
+                    <span>Get Quote</span>
+                    <div class="cta-shimmer"></div>
+                </a>
             </div>
             <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
                 <span></span><span></span><span></span>
             </button>
         </nav>
 
+        <!-- Hero Content -->
         <div class="hero-content">
-            <p class="hero-tag animate-fade-up">✨ South India's Finest Wedding Photography</p>
-            <h1 class="hero-title animate-fade-up delay-1">
-                Your Love Story,<br>
-                <span class="accent-script">Beautifully Captured</span>
-            </h1>
-            <p class="hero-subtitle animate-fade-up delay-2">
-                From the sacred rituals of Pellikoduku to the joyous Sangeeth nights — we frame every emotion, every tradition, every tear of joy.
-            </p>
-            <div class="hero-actions animate-fade-up delay-3">
-                <button class="btn btn-primary btn-glow" onclick="startQuoteBuilder()">
-                    <span>Build Your Quote</span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </button>
-                <button class="btn btn-outline" onclick="scrollToSection('services-preview')">
-                    <span>Explore Services</span>
-                </button>
+            <div class="hero-badge animate-fade-up">
+                <div class="badge-dot"></div>
+                <span>South India's Premier Wedding Photography</span>
             </div>
-            <div class="hero-stats animate-fade-up delay-4">
-                <div class="stat">
-                    <span class="stat-number" data-count="500">0</span><span class="stat-suffix">+</span>
-                    <span class="stat-label">Weddings Captured</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat">
-                    <span class="stat-number" data-count="50">0</span><span class="stat-suffix">+</span>
-                    <span class="stat-label">Expert Team</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat">
-                    <span class="stat-number" data-count="8">0</span><span class="stat-suffix">+</span>
-                    <span class="stat-label">Years Experience</span>
-                </div>
+
+            <h1 class="hero-title animate-fade-up delay-1">
+                <span class="title-line">Your Love Story,</span>
+                <span class="title-line accent-line">
+                    <span class="accent-script">Beautifully Captured</span>
+                </span>
+            </h1>
+
+            <p class="hero-subtitle animate-fade-up delay-2">
+                From the sacred rituals of <em>Pellikoduku</em> to the joyous <em>Sangeeth</em> nights —<br
+                    class="desktop-only"> we frame every emotion, every tradition, every tear of joy.
+            </p>
+
+            <div class="hero-actions animate-fade-up delay-3">
+                <button class="btn btn-primary btn-glow btn-hero" onclick="startQuoteBuilder()" id="hero-cta">
+                    <span class="btn-text">Build Your Quote</span>
+                    <span class="btn-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </span>
+                    <div class="btn-ripple"></div>
+                </button>
+                <button class="btn btn-glass" onclick="scrollToSection('services-preview')">
+                    <span>Explore Services</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12l7 7 7-7" />
+                    </svg>
+                </button>
             </div>
         </div>
 
-        <div class="scroll-indicator animate-fade-up delay-5">
-            <div class="mouse">
-                <div class="mouse-wheel"></div>
+        <!-- Hero Stats Ribbon -->
+        <div class="hero-stats-ribbon animate-fade-up delay-4">
+            <div class="stat-item">
+                <span class="stat-number" data-count="500">0</span><span class="stat-suffix">+</span>
+                <span class="stat-label">Weddings Captured</span>
             </div>
-            <span>Scroll to explore</span>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number" data-count="50">0</span><span class="stat-suffix">+</span>
+                <span class="stat-label">Expert Team</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number" data-count="8">0</span><span class="stat-suffix">+</span>
+                <span class="stat-label">Years Experience</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number" data-count="15">0</span><span class="stat-suffix">+</span>
+                <span class="stat-label">Cities Covered</span>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator animate-fade-up delay-5">
+            <div class="scroll-line"></div>
+            <span>Scroll</span>
         </div>
     </section>
 
-    <!-- ======= SERVICES PREVIEW ======= -->
+    <!-- ======= MARQUEE RIBBON ======= -->
+    <div class="marquee-ribbon">
+        <div class="marquee-track">
+            <span>Traditional Photography ✦ Candid Moments ✦ Drone Coverage ✦ LED Screens ✦ Pre-Wedding Shoots ✦ Live
+                Streaming ✦ Premium Albums ✦ Cinematic Films ✦ </span>
+            <span>Traditional Photography ✦ Candid Moments ✦ Drone Coverage ✦ LED Screens ✦ Pre-Wedding Shoots ✦ Live
+                Streaming ✦ Premium Albums ✦ Cinematic Films ✦ </span>
+        </div>
+    </div>
+
+    <!-- ======= SERVICES SECTION ======= -->
     <section id="services-preview" class="services-section">
         <div class="container">
             <div class="section-header">
@@ -90,36 +151,75 @@
                 <p class="section-subtitle">Every angle, every emotion, every moment — preserved forever</p>
             </div>
             <div class="services-grid">
-                <div class="service-card" data-tilt>
-                    <div class="service-icon">📷</div>
+                <div class="service-card reveal-card">
+                    <div class="card-glow"></div>
+                    <div class="service-icon-wrap">
+                        <div class="service-icon">📷</div>
+                    </div>
                     <h3>Traditional Photography</h3>
-                    <p>Classic, timeless shots that capture the grandeur of rituals and family portraits.</p>
+                    <p>Classic, timeless shots that capture the grandeur of every ritual and family portrait
+                        beautifully.</p>
+                    <div class="card-line"></div>
                 </div>
-                <div class="service-card" data-tilt>
-                    <div class="service-icon">🎬</div>
-                    <h3>Candid Photography & Videography</h3>
-                    <p>Natural, unscripted moments that tell your real love story as it unfolds.</p>
+                <div class="service-card reveal-card">
+                    <div class="card-glow"></div>
+                    <div class="service-icon-wrap">
+                        <div class="service-icon">🎬</div>
+                    </div>
+                    <h3>Candid Photography & Video</h3>
+                    <p>Natural, unscripted moments that tell your real love story as it unfolds spontaneously.</p>
+                    <div class="card-line"></div>
                 </div>
-                <div class="service-card" data-tilt>
-                    <div class="service-icon">🚁</div>
+                <div class="service-card reveal-card">
+                    <div class="card-glow"></div>
+                    <div class="service-icon-wrap">
+                        <div class="service-icon">🚁</div>
+                    </div>
                     <h3>Drone Coverage</h3>
-                    <p>Breathtaking aerial perspectives of your venue and grand celebrations.</p>
+                    <p>Breathtaking aerial perspectives of your venue, processions, and grand celebrations.</p>
+                    <div class="card-line"></div>
                 </div>
-                <div class="service-card" data-tilt>
-                    <div class="service-icon">📺</div>
+                <div class="service-card reveal-card">
+                    <div class="card-glow"></div>
+                    <div class="service-icon-wrap">
+                        <div class="service-icon">📺</div>
+                    </div>
                     <h3>LED Screen</h3>
-                    <p>Giant LED displays to share your moments live with all guests at the venue.</p>
+                    <p>Giant P3 LED displays to share your moments live with all guests at the venue.</p>
+                    <div class="card-line"></div>
                 </div>
-                <div class="service-card" data-tilt>
-                    <div class="service-icon">📡</div>
+                <div class="service-card reveal-card">
+                    <div class="card-glow"></div>
+                    <div class="service-icon-wrap">
+                        <div class="service-icon">📡</div>
+                    </div>
                     <h3>Live Streaming</h3>
                     <p>Stream your celebrations live for loved ones who can't be there in person.</p>
+                    <div class="card-line"></div>
                 </div>
-                <div class="service-card" data-tilt>
-                    <div class="service-icon">📖</div>
+                <div class="service-card reveal-card">
+                    <div class="card-glow"></div>
+                    <div class="service-icon-wrap">
+                        <div class="service-icon">📖</div>
+                    </div>
                     <h3>Premium Albums</h3>
-                    <p>Handcrafted albums — Press Book & Magnum editions to treasure forever.</p>
+                    <p>Handcrafted Press Book & Magnum edition albums to treasure your memories forever.</p>
+                    <div class="card-line"></div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======= GALLERY SECTION ======= -->
+    <section id="gallery-section" class="gallery-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Our Work</span>
+                <h2 class="section-title">Moments We've Captured</h2>
+                <p class="section-subtitle">A glimpse into the love stories we've had the honour of documenting</p>
+            </div>
+            <div class="gallery-grid" id="gallery-grid">
+                <!-- Gallery images will be generated -->
             </div>
         </div>
     </section>
@@ -129,37 +229,66 @@
         <div class="container">
             <div class="section-header">
                 <span class="section-tag">Simple Process</span>
-                <h2 class="section-title">How It Works</h2>
-                <p class="section-subtitle">Get your custom quote in just 3 simple steps</p>
+                <h2 class="section-title">Get Your Quote in 3 Steps</h2>
+                <p class="section-subtitle">Build a custom quotation for your dream wedding, instantly</p>
             </div>
-            <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-number">01</div>
+            <div class="steps-timeline">
+                <div class="timeline-line"></div>
+                <div class="step-item reveal-card">
+                    <div class="step-number-ring">
+                        <span>01</span>
+                    </div>
                     <div class="step-content">
                         <h3>Select Your Events</h3>
-                        <p>Choose from engagement, haldi, pellikoduku, wedding day, reception, sangeeth, and more.</p>
+                        <p>Choose from engagement, haldi, pellikoduku, pellikuthuru, wedding day, reception, sangeeth,
+                            mehandi and more.</p>
                     </div>
                 </div>
-                <div class="step-connector"><svg viewBox="0 0 100 20"><path d="M0,10 Q50,0 100,10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="5,5"/></svg></div>
-                <div class="step-card">
-                    <div class="step-number">02</div>
+                <div class="step-item reveal-card">
+                    <div class="step-number-ring">
+                        <span>02</span>
+                    </div>
                     <div class="step-content">
                         <h3>Customize Services</h3>
-                        <p>Pick traditional/candid photo, video, drone, LED screen, albums for each event.</p>
+                        <p>Pick traditional/candid photo & video, drone coverage, LED screen, premium albums for each
+                            event.</p>
                     </div>
                 </div>
-                <div class="step-connector"><svg viewBox="0 0 100 20"><path d="M0,10 Q50,0 100,10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="5,5"/></svg></div>
-                <div class="step-card">
-                    <div class="step-number">03</div>
+                <div class="step-item reveal-card">
+                    <div class="step-number-ring">
+                        <span>03</span>
+                    </div>
                     <div class="step-content">
                         <h3>Download Quotation</h3>
-                        <p>Review your total, enter your details, and download a professional PDF quote instantly.</p>
+                        <p>Review your total, enter your details, and download a beautifully designed PDF quotation
+                            instantly.</p>
                     </div>
                 </div>
             </div>
             <div class="steps-cta">
                 <button class="btn btn-primary btn-glow" onclick="startQuoteBuilder()">
-                    Start Building Your Quote →
+                    Start Building Your Quote
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======= CTA BANNER ======= -->
+    <section class="cta-banner">
+        <div class="cta-bg-pattern"></div>
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Build Your Dream Wedding Package?</h2>
+                <p>Create a personalised quotation in under 2 minutes. No pressure, no commitment — just your dream
+                    package, ready to download.</p>
+                <button class="btn btn-primary btn-glow btn-large" onclick="startQuoteBuilder()">
+                    Build Your Quote Now
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
                 </button>
             </div>
         </div>
@@ -171,46 +300,71 @@
             <div class="section-header">
                 <span class="section-tag">Happy Couples</span>
                 <h2 class="section-title">What Our Clients Say</h2>
+                <p class="section-subtitle">The love stories we've been a part of</p>
             </div>
             <div class="testimonials-track">
-                <div class="testimonial-card">
+                <div class="testimonial-card reveal-card">
+                    <div class="tq-mark">"</div>
                     <div class="testimonial-stars">★★★★★</div>
-                    <p class="testimonial-text">"Shots by Siri captured our wedding with such grace and artistry. Every photo tells a story. The candid shots during our pellikoduku were absolutely magical!"</p>
+                    <p class="testimonial-text">Shots by Siri captured our wedding with such grace and artistry. Every
+                        photo tells a story. The candid shots during our pellikoduku were absolutely magical!</p>
                     <div class="testimonial-author">
                         <div class="author-avatar">P&R</div>
-                        <div><strong>Priya & Rahul</strong><br><span>Wedding — Hyderabad</span></div>
+                        <div>
+                            <strong>Priya & Rahul</strong>
+                            <span>Wedding — Hyderabad</span>
+                        </div>
                     </div>
                 </div>
-                <div class="testimonial-card">
+                <div class="testimonial-card reveal-card">
+                    <div class="tq-mark">"</div>
                     <div class="testimonial-stars">★★★★★</div>
-                    <p class="testimonial-text">"The drone footage of our venue was breathtaking! The team was so professional and made everyone feel at ease. Our album is a treasure we look at every anniversary."</p>
+                    <p class="testimonial-text">The drone footage of our venue was breathtaking! The team was so
+                        professional and made everyone feel at ease. Our Magnum album is a treasure we look at every
+                        anniversary.</p>
                     <div class="testimonial-author">
                         <div class="author-avatar">S&V</div>
-                        <div><strong>Swetha & Vinay</strong><br><span>Wedding — Vijayawada</span></div>
+                        <div>
+                            <strong>Swetha & Vinay</strong>
+                            <span>Wedding — Vijayawada</span>
+                        </div>
                     </div>
                 </div>
-                <div class="testimonial-card">
+                <div class="testimonial-card reveal-card">
+                    <div class="tq-mark">"</div>
                     <div class="testimonial-stars">★★★★★</div>
-                    <p class="testimonial-text">"From our engagement to the reception, they covered everything beautifully. The LED screen at our reception was a hit with all our guests!"</p>
+                    <p class="testimonial-text">From our engagement to the reception, they covered everything
+                        beautifully. The LED screen at our reception was a hit with all our guests! Absolutely recommend
+                        them.</p>
                     <div class="testimonial-author">
                         <div class="author-avatar">A&K</div>
-                        <div><strong>Anusha & Krishna</strong><br><span>Wedding — Visakhapatnam</span></div>
+                        <div>
+                            <strong>Anusha & Krishna</strong>
+                            <span>Wedding — Visakhapatnam</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ======= QUOTE BUILDER (Multi-Step Form) ======= -->
+    <!-- ======= QUOTE BUILDER (Full-Screen Multi-Step) ======= -->
     <div id="quote-builder" class="quote-builder hidden">
         <div class="qb-backdrop" onclick="closeQuoteBuilder()"></div>
         <div class="qb-panel">
-            <button class="qb-close" onclick="closeQuoteBuilder()" aria-label="Close quote builder">&times;</button>
+            <button class="qb-close" onclick="closeQuoteBuilder()" aria-label="Close">&times;</button>
 
-            <!-- Progress bar -->
+            <!-- Progress -->
             <div class="qb-progress">
                 <div class="qb-progress-bar" id="qb-progress-bar"></div>
-                <div class="qb-progress-text" id="qb-progress-text">Step 1 of 6</div>
+                <div class="qb-progress-steps" id="qb-progress-steps">
+                    <span class="ps active" data-s="1">Details</span>
+                    <span class="ps" data-s="2">Events</span>
+                    <span class="ps" data-s="3">Services</span>
+                    <span class="ps" data-s="4">Extras</span>
+                    <span class="ps" data-s="5">Summary</span>
+                    <span class="ps" data-s="6">Download</span>
+                </div>
             </div>
 
             <!-- Running Total -->
@@ -219,57 +373,56 @@
                 <span class="running-amount" id="running-amount">₹0</span>
             </div>
 
-            <!-- STEP 1: Contact Info -->
+            <!-- STEP 1: Contact -->
             <div class="qb-step active" data-step="1">
                 <div class="qb-step-header">
                     <span class="qb-step-icon">💍</span>
                     <h2>Let's Start with Your Details</h2>
-                    <p>Tell us about yourself so we can personalize your quote</p>
+                    <p>Tell us about yourself so we can personalise your quote</p>
                 </div>
-                <div class="qb-form-group">
-                    <label for="customer-name">Your Name <span class="required">*</span></label>
-                    <input type="text" id="customer-name" placeholder="Enter your full name" required>
-                </div>
-                <div class="qb-form-group">
-                    <label for="customer-mobile">Mobile Number <span class="required">*</span></label>
-                    <input type="tel" id="customer-mobile" placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" required>
-                </div>
-                <div class="qb-form-group">
-                    <label for="customer-email">Email (Optional)</label>
-                    <input type="email" id="customer-email" placeholder="Enter your email address">
-                </div>
-                <div class="qb-form-group">
-                    <label for="wedding-date">Wedding Date (Approximate)</label>
-                    <input type="date" id="wedding-date">
-                </div>
-                <div class="qb-form-group">
-                    <label for="wedding-city">Wedding City</label>
-                    <input type="text" id="wedding-city" placeholder="e.g. Hyderabad, Vijayawada">
+                <div class="qb-form-grid">
+                    <div class="qb-form-group">
+                        <label for="customer-name">Your Name <span class="required">*</span></label>
+                        <input type="text" id="customer-name" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="qb-form-group">
+                        <label for="customer-mobile">Mobile Number <span class="required">*</span></label>
+                        <input type="tel" id="customer-mobile" placeholder="10-digit mobile number" pattern="[0-9]{10}"
+                            required>
+                    </div>
+                    <div class="qb-form-group">
+                        <label for="customer-email">Email (Optional)</label>
+                        <input type="email" id="customer-email" placeholder="your@email.com">
+                    </div>
+                    <div class="qb-form-group">
+                        <label for="wedding-date">Wedding Date</label>
+                        <input type="date" id="wedding-date">
+                    </div>
+                    <div class="qb-form-group full-width">
+                        <label for="wedding-city">Wedding City</label>
+                        <input type="text" id="wedding-city" placeholder="e.g. Hyderabad, Vijayawada, Visakhapatnam">
+                    </div>
                 </div>
             </div>
 
-            <!-- STEP 2: Select Events -->
+            <!-- STEP 2: Events -->
             <div class="qb-step" data-step="2">
                 <div class="qb-step-header">
                     <span class="qb-step-icon">🎊</span>
                     <h2>Select Your Wedding Events</h2>
-                    <p>Choose all the events you want us to cover</p>
+                    <p>Choose all the events you'd like us to cover</p>
                 </div>
-                <div class="events-grid" id="events-grid">
-                    <!-- Events will be rendered by JS -->
-                </div>
+                <div class="events-grid" id="events-grid"></div>
             </div>
 
-            <!-- STEP 3: Configure Services per Event -->
+            <!-- STEP 3: Services per Event -->
             <div class="qb-step" data-step="3">
                 <div class="qb-step-header">
                     <span class="qb-step-icon">🎥</span>
                     <h2>Customize Services for Each Event</h2>
-                    <p>Select photography, videography, drone, and LED options for your chosen events</p>
+                    <p>Select photography, videography, drone, and LED options</p>
                 </div>
-                <div class="event-config-container" id="event-config-container">
-                    <!-- Dynamic event configuration cards -->
-                </div>
+                <div class="event-config-container" id="event-config-container"></div>
             </div>
 
             <!-- STEP 4: Albums & Extras -->
@@ -280,9 +433,9 @@
                     <p>Premium albums and extras to treasure your memories</p>
                 </div>
                 <div class="extras-container" id="extras-container">
-                    <!-- Album options -->
                     <div class="extra-section">
-                        <h3 class="extra-section-title">📸 Photo Albums <span class="extra-note">(25 sheets each)</span></h3>
+                        <h3 class="extra-section-title">📸 Photo Albums <span class="extra-note">(25 sheets each)</span>
+                        </h3>
                         <div class="extra-items">
                             <div class="extra-item">
                                 <div class="extra-info">
@@ -330,7 +483,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="extra-section">
                         <h3 class="extra-section-title">🎬 Additional Services</h3>
                         <div class="extra-items">
@@ -339,36 +491,29 @@
                                     <h4>Pre-Wedding Shoot — Photo Only</h4>
                                     <p class="extra-price">₹25,000</p>
                                 </div>
-                                <div class="toggle-control">
-                                    <label class="toggle">
-                                        <input type="checkbox" id="prewed-photo" onchange="recalculate()">
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
+                                <div class="toggle-control"><label class="toggle"><input type="checkbox"
+                                            id="prewed-photo"
+                                            onchange="handlePrewedToggle('prewed-photo');recalculate()"><span
+                                            class="toggle-slider"></span></label></div>
                             </div>
                             <div class="extra-item">
                                 <div class="extra-info">
                                     <h4>Pre-Wedding Shoot — Photo & Video</h4>
                                     <p class="extra-price">₹45,000</p>
                                 </div>
-                                <div class="toggle-control">
-                                    <label class="toggle">
-                                        <input type="checkbox" id="prewed-both" onchange="recalculate()">
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
+                                <div class="toggle-control"><label class="toggle"><input type="checkbox"
+                                            id="prewed-both"
+                                            onchange="handlePrewedToggle('prewed-both');recalculate()"><span
+                                            class="toggle-slider"></span></label></div>
                             </div>
                             <div class="extra-item">
                                 <div class="extra-info">
                                     <h4>Live Streaming (4 hours)</h4>
                                     <p class="extra-price">₹15,000</p>
                                 </div>
-                                <div class="toggle-control">
-                                    <label class="toggle">
-                                        <input type="checkbox" id="live-streaming" onchange="recalculate()">
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
+                                <div class="toggle-control"><label class="toggle"><input type="checkbox"
+                                            id="live-streaming" onchange="recalculate()"><span
+                                            class="toggle-slider"></span></label></div>
                             </div>
                             <div class="extra-item">
                                 <div class="extra-info">
@@ -376,42 +521,32 @@
                                     <p class="extra-desc">20-25 min cinematic wedding film</p>
                                     <p class="extra-price">₹35,000</p>
                                 </div>
-                                <div class="toggle-control">
-                                    <label class="toggle">
-                                        <input type="checkbox" id="documentary" onchange="recalculate()">
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                </div>
+                                <div class="toggle-control"><label class="toggle"><input type="checkbox"
+                                            id="documentary" onchange="recalculate()"><span
+                                            class="toggle-slider"></span></label></div>
                             </div>
                         </div>
                     </div>
-
                     <div class="extra-section">
                         <h3 class="extra-section-title">⏱ Post Production Timeline</h3>
                         <div class="timeline-options">
-                            <label class="timeline-option">
-                                <input type="radio" name="post-production" value="1-month" onchange="recalculate()">
-                                <div class="timeline-card">
-                                    <span class="timeline-label">Express</span>
-                                    <span class="timeline-duration">1 Month</span>
-                                    <span class="timeline-price">+₹20,000</span>
-                                </div>
+                            <label class="timeline-option"><input type="radio" name="post-production" value="1-month"
+                                    onchange="recalculate()">
+                                <div class="timeline-card"><span class="timeline-label">Express</span><span
+                                        class="timeline-duration">1 Month</span><span
+                                        class="timeline-price">+₹20,000</span></div>
                             </label>
-                            <label class="timeline-option">
-                                <input type="radio" name="post-production" value="3-months" checked onchange="recalculate()">
-                                <div class="timeline-card">
-                                    <span class="timeline-label">Standard</span>
-                                    <span class="timeline-duration">3 Months</span>
-                                    <span class="timeline-price">Included</span>
-                                </div>
+                            <label class="timeline-option"><input type="radio" name="post-production" value="3-months"
+                                    checked onchange="recalculate()">
+                                <div class="timeline-card"><span class="timeline-label">Standard</span><span
+                                        class="timeline-duration">3 Months</span><span
+                                        class="timeline-price">Included</span></div>
                             </label>
-                            <label class="timeline-option">
-                                <input type="radio" name="post-production" value="5-months" onchange="recalculate()">
-                                <div class="timeline-card">
-                                    <span class="timeline-label">Relaxed</span>
-                                    <span class="timeline-duration">5 Months</span>
-                                    <span class="timeline-price">-₹5,000</span>
-                                </div>
+                            <label class="timeline-option"><input type="radio" name="post-production" value="5-months"
+                                    onchange="recalculate()">
+                                <div class="timeline-card"><span class="timeline-label">Relaxed</span><span
+                                        class="timeline-duration">5 Months</span><span
+                                        class="timeline-price">−₹5,000</span></div>
                             </label>
                         </div>
                     </div>
@@ -425,9 +560,7 @@
                     <h2>Your Quotation Summary</h2>
                     <p>Review your selections before downloading</p>
                 </div>
-                <div class="summary-container" id="summary-container">
-                    <!-- Dynamic summary -->
-                </div>
+                <div class="summary-container" id="summary-container"></div>
             </div>
 
             <!-- STEP 6: Download -->
@@ -435,7 +568,7 @@
                 <div class="qb-step-header">
                     <span class="qb-step-icon">🎉</span>
                     <h2>Congratulations!</h2>
-                    <p>Your personalized quotation is ready</p>
+                    <p>Your personalised quotation is ready</p>
                 </div>
                 <div class="download-section">
                     <div class="final-amount-display">
@@ -443,19 +576,24 @@
                         <span class="final-amount" id="final-amount">₹0</span>
                     </div>
                     <div class="download-actions">
-                        <button class="btn btn-primary btn-glow btn-large" onclick="downloadPDF()" id="download-pdf-btn">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                        <button class="btn btn-primary btn-glow btn-large" onclick="downloadPDF()"
+                            id="download-pdf-btn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                            </svg>
                             <span>Download PDF Quotation</span>
                         </button>
                     </div>
                     <div class="terms-note">
-                        <p><strong>Terms:</strong></p>
+                        <p><strong>Terms & Conditions:</strong></p>
                         <ul>
                             <li>Sessions last for 5-6 hours per event</li>
                             <li>Travel and stay to be arranged by the client</li>
                             <li>50% advance at booking, balance on the wedding day</li>
                             <li>Output timeline depends on timely payment</li>
                             <li>Prices are subject to change based on final discussion</li>
+                            <li>If another photography team is hired, the contract will be cancelled</li>
                         </ul>
                     </div>
                     <div class="contact-note">
@@ -465,15 +603,19 @@
                 </div>
             </div>
 
-            <!-- Navigation Buttons -->
+            <!-- Navigation -->
             <div class="qb-nav">
                 <button class="btn btn-outline" id="qb-prev" onclick="prevStep()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
                     <span>Previous</span>
                 </button>
                 <button class="btn btn-primary" id="qb-next" onclick="nextStep()">
                     <span>Next Step</span>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
                 </button>
             </div>
         </div>
@@ -484,14 +626,16 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <span class="logo-icon">📸</span>
-                    <span class="logo-text">Shots by Siri</span>
-                    <p>Capturing love stories across South India since 2018. Every frame tells a story, every moment becomes a memory.</p>
+                    <img src="assets/logo.png" alt="Shots by Siri" class="footer-logo"
+                        onerror="this.style.display='none'">
+                    <p>Capturing love stories across South India since 2018. Every frame tells a story, every moment
+                        becomes a memory.</p>
                 </div>
                 <div class="footer-links">
                     <h4>Quick Links</h4>
                     <a href="#services-preview">Services</a>
                     <a href="#how-it-works">How it Works</a>
+                    <a href="#gallery-section">Gallery</a>
                     <a href="#testimonials">Testimonials</a>
                     <a href="javascript:void(0)" onclick="startQuoteBuilder()">Build Your Quote</a>
                 </div>
@@ -503,17 +647,19 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2026 Shots by Siri. All rights reserved. | Made with ❤️ for beautiful weddings <br> Designed & Developed by <a href="https://vectorflux-ai.github.io/">VectorFlux AI</a></p>
+                <p>© 2026 Shots by Siri. All rights reserved. | Made with ❤️ for beautiful weddings <br> Designed &
+                    Developed by <a href="https://vectorflux-ai.github.io/">VectorFlux AI</a></p>
             </div>
         </div>
     </footer>
 
-    <!-- Mobile Menu Overlay -->
+    <!-- Mobile Menu -->
     <div class="mobile-menu-overlay" id="mobile-menu-overlay">
         <div class="mobile-menu-content">
             <button class="mobile-close" onclick="closeMobileMenu()">&times;</button>
             <a href="#services-preview" onclick="closeMobileMenu()">Services</a>
             <a href="#how-it-works" onclick="closeMobileMenu()">How it Works</a>
+            <a href="#gallery-section" onclick="closeMobileMenu()">Gallery</a>
             <a href="#testimonials" onclick="closeMobileMenu()">Testimonials</a>
             <a href="javascript:void(0)" class="nav-cta" onclick="closeMobileMenu();startQuoteBuilder()">Get Quote</a>
         </div>
@@ -521,4 +667,5 @@
 
     <script src="app.js"></script>
 </body>
+
 </html>
