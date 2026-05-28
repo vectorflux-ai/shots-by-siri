@@ -47,7 +47,7 @@ const EVENTS = [
     { id: 'satyanarayana-vratham', name: 'Satyanarayana Vratham', icon: '🙏', description: 'Post-wedding puja', services: ['traditional-photo', 'traditional-video'] },
 ];
 
-const GOOGLE_SHEETS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyz8aelA7xbI2HBGFYJiGUO6pDRdMjVQmzuSB69FeQFz59SHlwfAolkaeAvc5Ar27s/exec';
 
 // ——— State ———
 let currentStep = 1;
